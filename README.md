@@ -21,7 +21,6 @@
 * **CSS3** — Dark theme, blur effects, layout
 * **JavaScript (Vanilla)** — Playlist, player logic & rendering
 * **Browser APIs** — Drag and Drop, URL.createObjectURL
-* **Deployment** — Any static host (GitHub Pages, Vercel, Netlify)
 
 ---
 
@@ -54,7 +53,7 @@ See the [LICENSE](LICENSE) file for details.
 ---
 
 <div align="center">
-  <sub>by <a href="https://github.com/0xsyReal">0xsy</a></sub>
+  <sub>made by <a href="https://github.com/0xsyReal">0xsy</a></sub>
 </div>
 
 ---
