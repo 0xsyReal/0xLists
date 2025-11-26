@@ -326,12 +326,6 @@
             overflow: hidden;
         }
 
-        .playlist-item .preview img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
         .playlist-item .media-info {
             flex: 1;
             min-width: 0;
@@ -582,7 +576,7 @@
                 updateResetButton();
             });
 
-            // Add media to playlist
+            // Add media to playlist - OPTIMIZED
             function addMediaToPlaylist(file) {
                 const fileExtension = file.name.split('.').pop().toLowerCase();
                 const isVideo = supportedFormats.video.includes(fileExtension);
@@ -602,17 +596,31 @@
                     elementId: 'media_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9)
                 };
                 
-                // Get duration for the media
-                const mediaElement = isVideo ? document.createElement('video') : document.createElement('audio');
-                mediaElement.src = mediaObject.url;
-                mediaElement.addEventListener('loadedmetadata', function() {
-                    mediaObject.duration = mediaElement.duration;
-                    // Only update display if not currently updating to prevent flickering
+                // Get duration for the media - OPTIMIZED: tek seferlik element kullan
+                const tempMedia = isVideo ? document.createElement('video') : document.createElement('audio');
+                tempMedia.src = mediaObject.url;
+                
+                const onLoaded = function() {
+                    mediaObject.duration = tempMedia.duration;
+                    // Cleanup
+                    tempMedia.removeEventListener('loadedmetadata', onLoaded);
+                    tempMedia.removeEventListener('error', onError);
+                    tempMedia.src = '';
+                    
                     if (!updateInProgress) {
                         updatePlaylistDisplay();
                         updatePlaylistStats();
                     }
-                });
+                };
+                
+                const onError = function() {
+                    tempMedia.removeEventListener('loadedmetadata', onLoaded);
+                    tempMedia.removeEventListener('error', onError);
+                    tempMedia.src = '';
+                };
+                
+                tempMedia.addEventListener('loadedmetadata', onLoaded);
+                tempMedia.addEventListener('error', onError);
                 
                 mediaPlaylist.push(mediaObject);
             }
@@ -622,7 +630,7 @@
                 resetBtn.disabled = mediaPlaylist.length === 0;
             }
 
-            // Update playlist display - optimized to prevent flickering
+            // Update playlist display - OPTIMIZED: preview kaldırıldı
             function updatePlaylistDisplay() {
                 if (updateInProgress) return;
                 
@@ -639,7 +647,7 @@
                     return;
                 }
                 
-                // Create playlist
+                // Create playlist - OPTIMIZED: preview yerine basit ikon
                 let playlistHTML = '';
                 
                 mediaPlaylist.forEach((media, index) => {
@@ -650,10 +658,7 @@
                     playlistHTML += `
                         <div class="playlist-item ${isActive}" data-index="${index}" draggable="true" id="${media.elementId}">
                             <div class="preview">
-                                ${media.type === 'video' ? 
-                                    `<video muted><source src="${media.url}" type="video/mp4"></video>` : 
-                                    '<div>Audio</div>'
-                                }
+                                ${media.type === 'video' ? '🎬' : '🎵'}
                             </div>
                             <div class="media-info">
                                 <div class="media-name">${media.name}</div>
@@ -765,7 +770,7 @@
                 });
             }
 
-            // Remove media from playlist
+            // Remove media from playlist - OPTIMIZED: memory cleanup
             function removeMediaFromPlaylist(index) {
                 // If removed media is currently playing
                 if (index === currentMediaIndex) {
@@ -778,7 +783,7 @@
                     currentMediaIndex--;
                 }
                 
-                // Release URL
+                // Release URL - MEMORY CLEANUP
                 URL.revokeObjectURL(mediaPlaylist[index].url);
                 
                 // Remove from playlist
@@ -833,7 +838,7 @@
                 }
             }
 
-            // Update watched time - optimized to only update progress bars
+            // Update watched time - OPTIMIZED: sadece gerekli elementi güncelle
             function updateWatchedTime() {
                 if (currentMediaIndex >= 0 && !updateInProgress) {
                     const currentTime = mediaPlayer.currentTime || audioPlayer.currentTime;
@@ -908,7 +913,7 @@
                 backgroundMedia.playbackRate = speed;
             });
 
-            // Reset button
+            // Reset button - OPTIMIZED: tüm URL'leri temizle
             resetBtn.addEventListener('click', function() {
                 if (!this.disabled && confirm('Are you sure you want to reset everything? This will clear the playlist and stop current playback.')) {
                     // Stop all media
@@ -916,7 +921,7 @@
                     audioPlayer.pause();
                     backgroundMedia.pause();
                     
-                    // Clear playlist and release URLs
+                    // Clear playlist and release URLs - MEMORY CLEANUP
                     mediaPlaylist.forEach(media => {
                         URL.revokeObjectURL(media.url);
                     });
