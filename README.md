@@ -1,11 +1,3 @@
-Tamam, şimdi **senin verdiğin örnek README’nin *birebir tarzını*** koruyarak —
-**başlıklar, ikonlu bölüm düzeni, tablo yapısı, alt açıklamalar, badge stili, format**
-hepsi aynı olacak şekilde **0xLists projesine uyarlanmış** İngilizce README hazırladım.
-
-Aşağıdaki README **hazır**, direkt GitHub’a koyabilirsin:
-
----
-
 # 🎵 0xLists — Media Player
 
 ## ✨ Features
