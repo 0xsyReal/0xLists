@@ -38,47 +38,11 @@
 
 ---
 
-## 📂 Playlist System
-
-| Feature              | Description                            |
-| -------------------- | -------------------------------------- |
-| Drag & Drop          | Reorder items effortlessly             |
-| Auto Play Next       | Automatically plays the next file      |
-| Remove               | Delete items with one click            |
-| Updates in Real-Time | Smooth DOM updates without flicker     |
-| Progress Bar         | Shows how much of each file is watched |
-| Playlist Stats       | Total duration + watched time          |
-
----
-
-## 🎛 Controls
-
-| Control        | Description            |
-| -------------- | ---------------------- |
-| Loop Toggle    | Enable/disable looping |
-| Playback Speed | 0.2× → 8×              |
-| Item Click     | Play selected media    |
-| Drag Item      | Change playlist order  |
-| Remove Button  | Delete from playlist   |
-
----
-
 ## 🚀 Just in your browser.
 
 > 🔥 No build steps
 > 🔥 No dependencies
 > 🔥 Works instantly
-
----
-
-## 📱 Responsive Design
-
-* 📱 Mobile (>320px)
-* 📱 Tablets (>768px)
-* 💻 Desktop (>1024px)
-* 🖥️ Large screens (>1440px)
-
-The layout adapts smoothly to all screen sizes.
 
 ---
 
