@@ -516,6 +516,9 @@
                 </div>
                 
                 <div class="playlist-controls">
+                    <button id="shuffleBtn" disabled>
+                        <span>Karıştır</span>
+                    </button>
                     <button id="resetBtn" disabled>
                         <span>Reset All</span>
                     </button>
@@ -539,6 +542,7 @@
             const backgroundMedia = document.getElementById('backgroundMedia');
             const loopBtn = document.getElementById('loopBtn');
             const speedInput = document.getElementById('speedInput');
+            const shuffleBtn = document.getElementById('shuffleBtn');
             const resetBtn = document.getElementById('resetBtn');
             const playlist = document.getElementById('playlist');
             const playlistCount = document.getElementById('playlistCount');
@@ -551,6 +555,7 @@
             let dragStartIndex = null;
             let updateInProgress = false;
             let dragGhost = null;
+            let isShuffled = false;
 
             // Supported formats
             const supportedFormats = {
@@ -573,7 +578,7 @@
                 }
                 
                 updatePlaylistDisplay();
-                updateResetButton();
+                updateControlButtons();
             });
 
             // Add media to playlist - OPTIMIZED
@@ -625,9 +630,10 @@
                 mediaPlaylist.push(mediaObject);
             }
 
-            // Update reset button state
-            function updateResetButton() {
+            // Update control buttons state
+            function updateControlButtons() {
                 resetBtn.disabled = mediaPlaylist.length === 0;
+                shuffleBtn.disabled = mediaPlaylist.length < 2;
             }
 
             // Update playlist display - OPTIMIZED: preview kaldırıldı
@@ -643,7 +649,7 @@
                 if (mediaPlaylist.length === 0) {
                     playlist.innerHTML = '<div class="empty-playlist">Your playlist is empty. Use the button above to add media files.</div>';
                     updateInProgress = false;
-                    updateResetButton();
+                    updateControlButtons();
                     return;
                 }
                 
@@ -699,7 +705,7 @@
                 });
                 
                 updatePlaylistStats();
-                updateResetButton();
+                updateControlButtons();
                 updateInProgress = false;
             }
 
@@ -881,6 +887,39 @@
                 return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
             }
 
+            // Shuffle playlist
+            shuffleBtn.addEventListener('click', function() {
+                if (!this.disabled) {
+                    shufflePlaylist();
+                }
+            });
+
+            function shufflePlaylist() {
+                // Fisher-Yates shuffle algorithm
+                for (let i = mediaPlaylist.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [mediaPlaylist[i], mediaPlaylist[j]] = [mediaPlaylist[j], mediaPlaylist[i]];
+                }
+                
+                // Update current index if needed
+                if (currentMediaIndex !== -1) {
+                    // Find the new position of the currently playing media
+                    currentMediaIndex = mediaPlaylist.findIndex(media => media.elementId === mediaPlaylist[currentMediaIndex].elementId);
+                }
+                
+                isShuffled = true;
+                shuffleBtn.classList.add('active');
+                shuffleBtn.innerHTML = '<span>Karıştırıldı</span>';
+                
+                updatePlaylistDisplay();
+                
+                // Reset shuffle button after 2 seconds
+                setTimeout(() => {
+                    shuffleBtn.classList.remove('active');
+                    shuffleBtn.innerHTML = '<span>Karıştır</span>';
+                }, 2000);
+            }
+
             // Loop button
             loopBtn.addEventListener('click', function() {
                 isLooping = !isLooping;
@@ -930,6 +969,7 @@
                     mediaPlaylist = [];
                     currentMediaIndex = -1;
                     isLooping = false;
+                    isShuffled = false;
                     
                     // Reset players
                     mediaPlayer.src = '';
@@ -939,6 +979,8 @@
                     // Reset controls
                     loopBtn.innerHTML = '<span>Loop: Off</span>';
                     loopBtn.classList.remove('active');
+                    shuffleBtn.classList.remove('active');
+                    shuffleBtn.innerHTML = '<span>Karıştır</span>';
                     speedInput.value = '1';
                     
                     // Reset stats
@@ -946,7 +988,7 @@
                     
                     // Update display
                     updatePlaylistDisplay();
-                    updateResetButton();
+                    updateControlButtons();
                 }
             });
 
