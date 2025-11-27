@@ -909,14 +909,14 @@
                 
                 isShuffled = true;
                 shuffleBtn.classList.add('active');
-                shuffleBtn.innerHTML = '<span>Karıştırıldı</span>';
+                shuffleBtn.innerHTML = '<span>Shuffle</span>';
                 
                 updatePlaylistDisplay();
                 
                 // Reset shuffle button after 2 seconds
                 setTimeout(() => {
                     shuffleBtn.classList.remove('active');
-                    shuffleBtn.innerHTML = '<span>Karıştır</span>';
+                    shuffleBtn.innerHTML = '<span>Shuffle</span>';
                 }, 2000);
             }
 
